@@ -3,8 +3,8 @@ import sys
 import select
 
 try:
-    hostname = sys.argv[1]  # Hostname (can be '' or 'localhost' for local machine)
-    port = int(sys.argv[2])  # Port number
+    hostname = '' # Hostname (can be '' or 'localhost' for local machine)
+    port = int(sys.argv[1])  # Port number
 except:
     print("Usage: python filename.py hostname port")
     sys.exit(1)
@@ -21,6 +21,13 @@ except socket.error as e:
     sys.exit(1)
 
 server_socket.listen()
+
+while True:
+    conn, ip = server_socket.accept()
+
+    print(f"client connected : {ip}")
+
+    
 
 
 
