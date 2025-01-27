@@ -26,4 +26,12 @@ except socket.error as e:
 #login authentication
 client_socket.sendall(f"LOGIN {username}".encode())
 
-                       
+                       # Send the LOGIN command to the server
+client_socket.sendall(f"LOGIN {username}\n".encode('utf-8'))
+
+# Receive the server's response
+response = client_socket.recv(1024).decode('utf-8').strip()
+print("Server response:", response)
+
+# Close the client socket after receiving response
+client_socket.close()
