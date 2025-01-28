@@ -33,5 +33,8 @@ client_socket.sendall(f"LOGIN {username}\n".encode('utf-8'))
 response = client_socket.recv(1024).decode('utf-8').strip()
 print("Server response:", response)
 
+if response == "LOGIN SUCCESS":
+    print("You are now authenticated.")
+
 # Close the client socket after receiving response
 client_socket.close()
