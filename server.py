@@ -26,7 +26,7 @@ server_socket.listen()
 sockets_list = [server_socket]
 clients = {}  # Dictionary to map sockets to usernames
 
-# main loop with the select statement
+ # main loop with the select statement
 while True:
 
     #select the socket from the readable sockets using a select statement, handles multiple clients
@@ -54,12 +54,13 @@ while True:
                 #handle client authentication
                 if r not in clients:
                         
-                        if message.startswith("LOGIN "):  # if a login command is recieved add username to client dictionary 
-                           username = message.split(" ", 1)[1]
-                           clients[r] = username
-                           r.sendall("LOGIN SUCCESSFUL\n".encode('utf-8'))
-                           print(f"User {username} authenticated.")
-                        else:#Invalid user since there is no login command
+                      if message.startswith("LOGIN "):  # If login command received
+                        username = message.split(" ", 1)[1]
+                        clients[r] = username 
+                        response = "LOGIN SUCCESSFUL\n"
+                        r.sendall(response.encode('utf-8'))  # Send response to client
+                        
+                      else:#Invalid user since there is no login command sent from client
                             r.sendall("INVALID USER\n".encode('utf-8'))
                             sockets_list.remove(r)
                             r.close()

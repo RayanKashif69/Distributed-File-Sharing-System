@@ -31,7 +31,7 @@ client_socket.sendall(f"LOGIN {username}\n".encode('utf-8'))
 response = client_socket.recv(1024).decode('utf-8').strip()
 print("Server response:", response)
 
-if response == "LOGIN SUCCESSFUL\n":
+if response.strip() == "LOGIN SUCCESSFUL":
     print("You are now authenticated.")
 
     # After successful login, you can keep the connection open and interact with the server
