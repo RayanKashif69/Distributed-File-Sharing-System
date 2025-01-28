@@ -24,9 +24,7 @@ except socket.error as e:
     sys.exit(1)
 
 #login authentication
-client_socket.sendall(f"LOGIN {username}".encode())
-
-                       # Send the LOGIN command to the server
+# Send the LOGIN command to the server
 client_socket.sendall(f"LOGIN {username}\n".encode('utf-8'))
 
 # Receive the server's response

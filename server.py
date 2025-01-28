@@ -49,7 +49,7 @@ while True:
                     print(f"Client {r.getpeername()} disconnected")
                     sockets_list.remove(r)
                     r.close()
-                    continue  # Skip further processing for this socket)
+                    continue  # Skip further processing for this socket
                 
                 #handle client authentication
                 if r not in clients:
@@ -64,21 +64,19 @@ while True:
                             sockets_list.remove(r)
                             r.close()
                                             
-                else: # user not authenticated, Login is required
-                            r.sendall("LOGIN REQUIRED\n".encode('utf-8'))
-                            
+                else:  # If user is already authenticated, allow further commands
+                    username = clients[r]
+                    print(f"Command from {username}: {message}")
+                    if message == "EXIT":
+                        r.sendall("Goodbye!\n".encode('utf-8'))
+                        sockets_list.remove(r)
+                        r.close()
+                    else:
+                        r.sendall(f"Unknown command: {message}\n".encode('utf-8'))
             
             except Exception as e:
                 print(f"Error with client: {e}")
-                if r in clients:       
-                 del clients[r]
-                 sockets_list.remove(r)
-                 r.close()
-
-
-
-
-    
-
-
-
+                if r in clients:
+                    del clients[r]
+                sockets_list.remove(r)
+                r.close()
