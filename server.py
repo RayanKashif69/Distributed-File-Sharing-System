@@ -47,9 +47,6 @@ while True:
                 #empty message
                 if not message:  # Client disconnected
                     print(f"Client {r.getpeername()} disconnected")
-                    if r in clients:
-                        username = clients[r]
-                        print(f"User {username} has disconnected.")
                     sockets_list.remove(r)
                     r.close()
                     continue  # Skip further processing for this socket)
@@ -73,10 +70,10 @@ while True:
             
             except Exception as e:
                 print(f"Error with client: {e}")
-                if r in clients:
-                    del clients[r]
-                sockets_list.remove(r)
-                r.close()
+                if r in clients:       
+                 del clients[r]
+                 sockets_list.remove(r)
+                 r.close()
 
 
 
