@@ -33,8 +33,23 @@ client_socket.sendall(f"LOGIN {username}\n".encode('utf-8'))
 response = client_socket.recv(1024).decode('utf-8').strip()
 print("Server response:", response)
 
-if response == "LOGIN SUCCESS":
+if response == "LOGIN SUCCESSFUL\n":
     print("You are now authenticated.")
 
-# Close the client socket after receiving response
+    # After successful login, you can keep the connection open and interact with the server
+    while True:
+        # Example: Requesting a list of files or any other command
+        command = input("Enter command (e.g., LIST_FILES, UPLOAD, DOWNLOAD, or EXIT): ")
+
+        if command == "EXIT":
+            client_socket.sendall("EXIT\n".encode('utf-8'))
+            break  # Exit the loop and close the connection
+        
+        client_socket.sendall(command.encode('utf-8'))
+
+        # Receive the server's response
+        response = client_socket.recv(1024).decode('utf-8').strip()
+        print(f"Server response: {response}")
+
+# Close the client socket after exiting the loop
 client_socket.close()
