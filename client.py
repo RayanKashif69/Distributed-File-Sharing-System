@@ -18,7 +18,7 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # connect to the server
 try:
     client_socket.connect((hostname,port))
-    print("Connected to the {hostname} at port {port}")
+    print(f"Connected to the {hostname} at port {port}")
 except socket.error as e:
     print(f"Error connecting to server: {e}")
     sys.exit(1)
