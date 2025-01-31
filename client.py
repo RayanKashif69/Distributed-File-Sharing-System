@@ -37,7 +37,7 @@ if response.strip() == "LOGIN SUCCESSFUL":
     # After successful login, you can keep the connection open and interact with the server
     while True:
         # Example: Requesting a list of files or any other command
-        command = input("Enter command (e.g., LIST_FILES, UPLOAD, DOWNLOAD, or EXIT): ")
+        command = input("Enter command (e.g., LIST, UPLOAD, DOWNLOAD, or EXIT): ")
 
         if command == "EXIT":
             client_socket.sendall("EXIT\n".encode('utf-8'))

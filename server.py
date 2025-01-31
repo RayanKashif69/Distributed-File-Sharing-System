@@ -6,7 +6,7 @@ try:
     hostname = '' # Hostname (can be '' or 'localhost' for local machine)
     port = int(sys.argv[1])  # Port number
 except:
-    print("Usage: python filename.py hostname port")
+    print("Usage: python filename.py port")
     sys.exit(1)
 
 # Create a server socket
@@ -26,8 +26,9 @@ server_socket.listen()
 sockets_list = [server_socket]
 clients = {}  # Dictionary to map sockets to usernames
 
+try:
  # main loop with the select statement
-while True:
+ while True:
 
     #select the socket from the readable sockets using a select statement, handles multiple clients
     readable_sockets, writable_sockets, exceptional_sockets = select.select(sockets_list, [], [])
@@ -65,7 +66,7 @@ while True:
                             sockets_list.remove(r)
                             r.close()
                                             
-                else:  # If user is already authenticated, allow further commands
+                else:  # If user is already authenticated, now im handling further commands
                     username = clients[r]
                     print(f"Command from {username}: {message}")
                     if message == "EXIT":
@@ -81,3 +82,11 @@ while True:
                     del clients[r]
                 sockets_list.remove(r)
                 r.close()
+                
+except KeyboardInterrupt:
+ print("\nServer Sutting")
+ for sock in sockets_list:
+  sock.close()
+
+ server_socket.close()
+ sys.exit(0)
