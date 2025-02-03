@@ -74,7 +74,7 @@ if response.strip() == "LOGIN SUCCESSFUL":
                         client_socket.sendall(data)
 
                 # message for server to know that the whole is transferred
-                client_socket.sendall(b"EOF\n")
+                client_socket.sendall(b"EOF")
 
                 print(f"{filename} sent successfully.")
 
@@ -119,9 +119,9 @@ if response.strip() == "LOGIN SUCCESSFUL":
                                 break  # Stop if no more data (EOF) or disconnected
 
                             # Handle EOF marker if received
-                            if data.endswith(b"EOF\n"):
+                            if data.endswith(b"EOF"):
                                 file_received.write(
-                                    data[:-4]
+                                    data[:-3]
                                 )  # Remove EOF marker and write to file
                                 break
                             else:

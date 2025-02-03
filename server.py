@@ -147,9 +147,9 @@ try:
                                                     break  # Stop if client disconnects
 
                                                 # Check if EOF is reached
-                                                if data.endswith(b"EOF\n"):
+                                                if data.endswith(b"EOF"):
                                                     file_received.write(
-                                                        data[:-4]
+                                                        data[:-3]
                                                     )  # remove EOF comment from the binary
                                                     break
                                                 else:
@@ -200,9 +200,9 @@ try:
                                                 break  # Stop if client disconnects
 
                                             # Check if EOF is reached
-                                            if data.endswith(b"EOF\n"):
+                                            if data.endswith(b"EOF"):
                                                 file_received.write(
-                                                    data[:-4]
+                                                    data[:-3]
                                                 )  # remove EOF comment from the binary
                                                 break
                                             else:
@@ -253,7 +253,7 @@ try:
                                             )  # Send each chunk of the file to the client
 
                                     # Notify the client that the file transfer is complete
-                                    r.sendall(b"EOF\n")
+                                    r.sendall(b"EOF")
                                     print(
                                         f"File '{filename}' sent to {clients[r]} successfully."
                                     )
