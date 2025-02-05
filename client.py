@@ -7,10 +7,10 @@ import os
 try:
     username = sys.argv[1]
     hostname = sys.argv[2]
-    port = int(sys.argv[3])
+    port = 8115
 
 except:
-    print("Usage: python filename.py username hostname port")
+    print("Usage: python filename.py username hostname ")
     sys.exit(1)
 
 # Create a client socket and connect to the server
@@ -39,7 +39,9 @@ if response.strip() == "LOGIN SUCCESSFUL":
     while True:
 
         # Example: Requesting a list of files or any other command
-        user_command = input("Enter command options (e.g., PUSH, LIST, GET, or EXIT): ")
+        user_command = input(
+            "Enter command options (e.g., PUSH <filename>, LIST, GET <filename>, DELETE <filename> or EXIT): "
+        )
 
         # ******* Handle push command, parse and send the file and its content ********
         if user_command.upper().startswith("PUSH "):
@@ -138,7 +140,31 @@ if response.strip() == "LOGIN SUCCESSFUL":
         elif user_command.upper() == "LIST":
             client_socket.sendall(user_command.encode("utf-8"))
             response = client_socket.recv(4096).decode("utf-8")
-            print("\nAvailable Files:\n" + response)
+            if response.strip() == "No files found on the server.":
+                print(
+                    "\nNo files found on the server."
+                )  # Handle the case where no files are available
+            else:
+                # Split the response into individual file entries
+                file_entries = response.strip().split("\n")
+
+                # Print a header for the file list
+                print("\nAvailable Files on the Server:")
+                print("=" * 60)  # Divider line
+                print(
+                    f"{'File Name':<20} {'Size (MB)':<10} {'Uploaded On':<20} {'Uploaded By':<15}"
+                )
+                print("-" * 60)  # Divider line
+
+                # Print each file's details in a structured format
+                for entry in file_entries:
+                    if entry:  # Skip empty lines
+                        filename, size_MB, timestamp, username = entry.split(", ")
+                        print(
+                            f"{filename:<20} {size_MB:<10} {timestamp:<20} {username:<15}"
+                        )
+
+                print("=" * 60)  # Divider line
 
         # ******* Handle DELETE command ********
         elif user_command.upper().startswith("DELETE "):
@@ -165,8 +191,7 @@ if response.strip() == "LOGIN SUCCESSFUL":
             response = (
                 client_socket.recv(1024).decode("utf-8").strip()
             )  # Get server response
-            print(f"🔹 Server response: {response}")
-
+            print(f"Server response: {response}")
             print(" Closing connection...")
             break  # Exit the loop
 

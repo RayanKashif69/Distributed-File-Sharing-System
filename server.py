@@ -12,9 +12,9 @@ METADATA_FILE = os.path.join(
 
 try:
     hostname = ""  # Hostname (can be '' or 'localhost' for local machine)
-    port = int(sys.argv[1])  # Port number
+    port = 8115  # Port number
 except:
-    print("Usage: python filename.py port")
+    print("Usage: python filename.py")
     sys.exit(1)
 
 # Create a server socket
@@ -23,7 +23,7 @@ server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # Bind the server socket to the provided hostname and port
 try:
     server_socket.bind((hostname, port))
-    print(f"Server is listening on {socket.gethostname()}:{port}")
+    print(f"Server is listening on {socket.gethostname()}: {port}")
 except socket.error as e:
     print(f"Error binding to port {port}: {e}")
     sys.exit(1)
@@ -96,7 +96,6 @@ try:
                         print(f"Command from {username}: {message}")
 
                         # ******Handle PUSH Command******
-
                         if message.upper().startswith("PUSH "):
                             try:
                                 _, filename = message.split(" ", 1)
@@ -236,7 +235,7 @@ try:
                                 r.sendall(
                                     f"Error receiving file: {e}\n".encode("utf-8")
                                 )
-
+                        # Handle GET command
                         elif message.upper().startswith("GET "):
                             try:
                                 _, filename = message.split(" ", 1)
@@ -246,6 +245,9 @@ try:
 
                                 # If the file exists, send it in chunks through the connection socket
                                 if os.path.exists(file_location):
+
+                                    r.sendall("Sending file now\n".encode())
+
                                     with open(file_location, "rb") as file_sent:
                                         while data := file_sent.read(4096):
                                             r.sendall(
@@ -266,32 +268,43 @@ try:
                             except Exception as e:
                                 print(f"Error sending file: {e}")
 
+                        # Handle LIST Command
                         elif message.upper() == "LIST":
+
+                            # First open the file, read all the lines in a buffer
                             try:
                                 with open(METADATA_FILE, "r") as meta_file:
                                     lines = meta_file.readlines()[
                                         1:
-                                    ]  # Skip header line
+                                    ]  # dont read the first line
 
+                                # Check if the server has no files (i.e., the metadata file is empty after skipping the header)
                                 if not lines:
                                     r.sendall(
                                         "No files found on the server.\n".encode(
                                             "utf-8"
                                         )
                                     )
+                                # If files exist, create a formatted list of files and their metadata
                                 else:
-                                    file_list = "\n".join(
-                                        f"{filename}, {size_MB} MB, {timestamp}, uploaded by: {username}"
-                                        for username, filename, size_MB, timestamp in (
-                                            line.strip().split(",") for line in lines
-                                        )
+                                    serverFiles = "\n".join(
+                                        f"{filename}, {size_MB} MB, {timestamp}, {username}"  # Format each file's metadata
+                                        for username, filename, size_MB, timestamp in (  # Extract metadata from each line
+                                            line.strip().split(
+                                                ","
+                                            )  # Split each line by the delimiter ',' to get individual fields
+                                            for line in lines
+                                        )  # parse the file data by using the delimiter , and
                                     )
-                                    r.sendall(f"{file_list}\n".encode("utf-8"))
+                                    r.sendall(
+                                        f"{serverFiles}\n".encode("utf-8")
+                                    )  # Split each line by the delimiter ',' to get individual fields
 
                             except Exception as e:
                                 print(f"Error listing files: {e}")
                                 r.sendall(f"Error listing files: {e}\n".encode("utf-8"))
 
+                        # Handle DELETE Command
                         elif message.upper().startswith("DELETE "):
                             try:
                                 _, filename = message.split(
@@ -325,15 +338,11 @@ try:
                                         if user == file_owner:
                                             # Only allow deletion if the user is the owner
                                             os.remove(file_location)  # Delete the file
-                                            success_message = f"File '{filename}' deleted successfully\n"
+                                            ser_response = f"File '{filename}' deleted successfully by {user}\n"
                                             r.sendall(
-                                                success_message.encode("utf-8")
+                                                ser_response.encode("utf-8")
                                             )  # Send success message to client
-                                            print(
-                                                f"File '{filename}' deleted successfully by {user}."
-                                            )
 
-                                            # Optionally, remove the file's metadata from the METADATA_FILE
                                             # Update the metadata file to remove the entry for the deleted file
                                             with open(METADATA_FILE, "r") as meta_file:
                                                 metadata_lines = meta_file.readlines()
@@ -371,10 +380,21 @@ try:
                             except Exception as e:
                                 print(f"Error deleting file: {e}")
 
-                            else:
-                                r.sendall(
-                                    f"Unknown command: {message}\n".encode("utf-8")
-                                )
+                        # Handle EXIT Command
+                        elif message.upper().startswith("EXIT\n"):
+                            # Send confirmation message
+                            r.sendall(b"GOODBYE\n")
+
+                            # Print message
+                            print(f"Client {clients[r]} disconnected.")
+
+                            # Close connection and remove from clients list
+                            r.close()
+                            del clients[r]
+
+                        # Handle Unknown Commands
+                        else:
+                            r.sendall(f"Unknown command: {message}\n".encode("utf-8"))
 
                 except Exception as e:
                     print(f"Error with client: {e}")
