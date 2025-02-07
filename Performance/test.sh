@@ -8,7 +8,7 @@ SERVER_HOST="localhost"
 USERNAME="test_user"
 
 # Get a valid file from the server directory
-FILE_LIST=($(ls /server_files))
+FILE_LIST=($(ls ./server_files))
 if [ ${#FILE_LIST[@]} -eq 0 ]; then
     echo " No files available on the server!"
     exit 1
