@@ -238,35 +238,61 @@ try:
                         # Handle GET command
                         elif message.upper().startswith("GET "):
                             try:
-                                _, filename = message.split(" ", 1)
-                                file_location = os.path.join(
-                                    SERVER_FILES, filename
-                                )  # Get the file path where the file is located
+                                if r not in clients:
+                                    r.sendall(
+                                        "ERROR: You must LOGIN first.\n".encode("utf-8")
+                                    )
+                                    continue  # Reject the request if user is not logged in
 
-                                # If the file exists, send it in chunks through the connection socket
+                                _, filename = message.split(" ", 1)
+                                file_location = os.path.join(SERVER_FILES, filename)
+
+                                print(f" Debug: Client requested file '{filename}'")
+                                print(f" Debug: Looking for file at '{file_location}'")
+
+                                # If the file exists, send "READY" before transferring
                                 if os.path.exists(file_location):
 
-                                    r.sendall("Sending file now\n".encode())
+                                    # Check file size before sending
+                                    file_size = os.path.getsize(file_location)
+                                    print(f"File Size: {file_size} bytes")
 
+                                    if file_size == 0:
+                                        print(
+                                            " Warning: The file is empty on the server!"
+                                        )
+
+                                    #  Fix: Send "READY" before sending the file
+                                    r.sendall("READY\n".encode("utf-8"))
+
+                                    #  Wait for client acknowledgment before sending file
+                                    client_response = (
+                                        r.recv(1024).decode("utf-8").strip()
+                                    )
+                                    if client_response != "ACK":
+                                        print(
+                                            f" Client did not acknowledge READY, received: {client_response}"
+                                        )
+
+                                    # Now send the file
                                     with open(file_location, "rb") as file_sent:
                                         while data := file_sent.read(4096):
                                             r.sendall(
                                                 data
-                                            )  # Send each chunk of the file to the client
+                                            )  # Send each chunk of the file
 
-                                    # Notify the client that the file transfer is complete
-                                    r.sendall(b"EOF")
-                                    print(
-                                        f"File '{filename}' sent to {clients[r]} successfully."
-                                    )
+                                    r.sendall(
+                                        b"EOF"
+                                    )  #  Ensure EOF is sent after the file
+                                    print(f" File '{filename}' sent successfully.")
 
-                                # If the file doesn't exist, send an error message
                                 else:
                                     error_message = f"ERROR: File '{filename}' is not available on the server\n"
+                                    print(error_message)
                                     r.sendall(error_message.encode("utf-8"))
 
                             except Exception as e:
-                                print(f"Error sending file: {e}")
+                                print(f" Error sending file: {e}")
 
                         # Handle LIST Command
                         elif message.upper() == "LIST":

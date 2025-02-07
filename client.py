@@ -152,7 +152,7 @@ if response.strip() == "LOGIN SUCCESSFUL":
                 print("\nAvailable Files on the Server:")
                 print("=" * 60)  # Divider line
                 print(
-                    f"{'File Name':<20} {'Size (MB)':<10} {'Uploaded On':<20} {'Uploaded By':<15}"
+                    f"{'File Name':<20} {'Size(Bytes)':<10} {'Uploaded On':<20} {'Uploaded By':<15}"
                 )
                 print("-" * 60)  # Divider line
 
