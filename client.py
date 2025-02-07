@@ -46,21 +46,26 @@ if response.strip() == "LOGIN SUCCESSFUL":
         # ******* Handle cd command *******
         if user_command.lower().startswith("cd "):
             try:
-                _, directory = user_command.split(" ", 1)
-                os.chdir(directory)
+                #parse the directory name and the command
+                _, dir = user_command.split(" ", 1)
+                #change the directory
+                os.chdir(dir)
                 print(f"Changed directory to: {os.getcwd()}")
             except FileNotFoundError:
-                print(f"Error: Directory '{directory}' not found.")
+                print(f"Error: Directory '{dir}' not found.")
             except Exception as e:
                 print(f"Error changing directory: {e}")
 
         # ******* Handle ls command *******
         elif user_command.lower() == "ls":
             try:
+                # list files in the current dir
                 files = os.listdir()
+                # if no files then error message is shown
                 if not files:
                     print("No files in the current directory.")
                 else:
+                #print the files
                     print("\nLocal Directory Files:")
                     print("=" * 40)
                     for file in files:
