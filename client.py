@@ -43,6 +43,32 @@ if response.strip() == "LOGIN SUCCESSFUL":
             "Enter command options (e.g., PUSH <filename>, LIST, GET <filename>, DELETE <filename> or EXIT): "
         )
 
+        # ******* Handle cd command *******
+        if user_command.lower().startswith("cd "):
+            try:
+                _, directory = user_command.split(" ", 1)
+                os.chdir(directory)
+                print(f"Changed directory to: {os.getcwd()}")
+            except FileNotFoundError:
+                print(f"Error: Directory '{directory}' not found.")
+            except Exception as e:
+                print(f"Error changing directory: {e}")
+
+        # ******* Handle ls command *******
+        elif user_command.lower() == "ls":
+            try:
+                files = os.listdir()
+                if not files:
+                    print("No files in the current directory.")
+                else:
+                    print("\nLocal Directory Files:")
+                    print("=" * 40)
+                    for file in files:
+                        print(file)
+                    print("=" * 40)
+            except Exception as e:
+                print(f"Error listing files: {e}")
+
         # ******* Handle push command, parse and send the file and its content ********
         if user_command.upper().startswith("PUSH "):
             try:
@@ -152,7 +178,7 @@ if response.strip() == "LOGIN SUCCESSFUL":
                 print("\nAvailable Files on the Server:")
                 print("=" * 60)  # Divider line
                 print(
-                    f"{'File Name':<20} {'Size(Bytes)':<10} {'Uploaded On':<20} {'Uploaded By':<15}"
+                    f"{'File Name':<20} {'Size(Bytes)':<12} {'Uploaded On':<22} {'Uploaded By':<15}"
                 )
                 print("-" * 60)  # Divider line
 
@@ -161,7 +187,7 @@ if response.strip() == "LOGIN SUCCESSFUL":
                     if entry:  # Skip empty lines
                         filename, size_MB, timestamp, username = entry.split(", ")
                         print(
-                            f"{filename:<20} {size_MB:<10} {timestamp:<20} {username:<15}"
+                            f"{filename:<20} {size_MB:<12} {timestamp:<22} {username:<15}"
                         )
 
                 print("=" * 60)  # Divider line
