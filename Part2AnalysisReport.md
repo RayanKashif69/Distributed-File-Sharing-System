@@ -49,13 +49,13 @@
 ![Download Time](downloads/10-100.png)
 
 ### **Download Time for 20 Clients**
-!![Download Time](downloads/20-100.png)
+![Download Time](downloads/20-100.png)
 
 ### **Download Time for 50 Clients**
-!![Download Time](downloads/50-100.png)
+![Download Time](downloads/50-100.png)
 
 ### **Download Time for 100 Clients**
-!![Download Time](downloads/100-100.png)
+![Download Time](downloads/100-100.png)
 
 ---
 
