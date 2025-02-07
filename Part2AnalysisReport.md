@@ -57,6 +57,9 @@
 ### **Download Time for 100 Clients**
 ![Download Time](Performance/downloads/100-100.png)
 
+#### **Note: IF YOU ARE UNABLE TO SEE TO SEE THE BOXPLOTS NAVIGATE TO THE FOLLOWING DIRECTORY Perfomance/Downloads/
+- for example, 20-100.png means there were 20 clients that were tested
+
 ---
 
 ## **Findings & Observations**
