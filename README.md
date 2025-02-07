@@ -6,7 +6,7 @@ TreeDrive is a stateful file-sharing system that allows clients to authenticate,
 
 - I have implemented the bonus question for cd and ls commands
 - server files uploads will be located in the directory /server_files
-- /serverfiles includes the metadata.txt file as well
+- /server_files includes the metadata.txt file as well
 
 ## Assigned Port Number: 8115-8119
 
