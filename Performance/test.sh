@@ -4,7 +4,7 @@ trap "kill 0" EXIT  # Ensure all subprocesses are killed when the script exits
 
 NUM_CLIENTS=5
 DOWNLOADS_PER_CLIENT=100
-SERVER_HOST="crow"
+SERVER_HOST="crow" # edit this to whatever hostname
 USERNAME="test_user"
 
 # Get a valid file from the server directory
